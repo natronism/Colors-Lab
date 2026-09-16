@@ -1,2 +1,5 @@
 # Colors-Lab
-Application that add and searches for colors
+The colors application is a webapp that allows registered users to login and search for existing colors in a database or add colors to that database.
+The application uses LAMP Stack via a digital ocean droplet, putty to ssh to the droplet, MySQL for the database, putty FTP (PSFTP) to upload the api endpoint files as well as frontend files to their respective directories, and postman to test api endpoints.
+To set up this app, one must have a lamp droplet and a domain to connect to your droplet's IP address. From there you should ssh into your droplet and create and populate your database. Create tables for users and colors, and populate those tables with data. Lastly create a database user that has permissions to the database granting them all privileges. Next, create directories for your css styling and api endpoints. You will create 3 api endpoints, Addcolor, Login, and SearchColors, then upload the php files with these endpoints to your api directory using PSFTP. Again use PSFTP to upload your frontend styles (css, html, and image files) to their respective directories.
+After completing these setup steps your webapp should be accessible through your domain. You should be able to login, search for, and add colors.
