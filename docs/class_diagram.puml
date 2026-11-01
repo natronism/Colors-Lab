@@ -1,0 +1,93 @@
+@startuml colors-lab-class
+title Colors Lab - class diagram (pages, script, API endpoints, database tables)
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+
+package "Frontend (public/)" {
+  class "index.html" as IndexPage <<page>> {
+    loginName : input
+    loginPassword : input
+    loginButton : button
+    loginResult : span
+  }
+
+  class "color.html" as ColorPage <<page>> {
+    searchText : input
+    colorText : input
+    searchColorButton : button
+    addColorButton : button
+    logoutButton : button
+    colorSearchResult : span
+    colorAddResult : span
+  }
+
+  class "code.js" as CodeJs <<script>> {
+    -urlBase : string
+    -extension : string
+    -userId : int
+    -firstName : string
+    -lastName : string
+    +doLogin()
+    +saveCookie()
+    +readCookie()
+    +doLogout()
+    +addColor()
+    +searchColor()
+  }
+}
+
+package "API (api/)" {
+  class "Login.php" as Login <<endpoint>> {
+    +getRequestInfo()
+    +sendResultInfoAsJson(obj)
+    +returnWithError(err)
+    +returnWithInfo(firstName, lastName, id)
+  }
+
+  class "SearchColors.php" as SearchColors <<endpoint>> {
+    +getRequestInfo()
+    +sendResultInfoAsJson(obj)
+    +returnWithError(err)
+    +returnWithInfo(searchResults)
+  }
+
+  class "AddColor.php" as AddColor <<endpoint>> {
+    +getRequestInfo()
+    +sendResultInfoAsJson(obj)
+    +returnWithError(err)
+  }
+}
+
+package "MySQL database COP4331" {
+  class Users <<table>> {
+    ID
+    Login
+    Password
+    firstName
+    lastName
+  }
+
+  class Colors <<table>> {
+    UserId
+    Name
+  }
+}
+
+IndexPage ..> CodeJs : loads
+ColorPage ..> CodeJs : loads
+
+CodeJs ..> Login : POST JSON (doLogin)
+CodeJs ..> SearchColors : POST JSON (searchColor)
+CodeJs ..> AddColor : POST JSON (addColor)
+
+Login ..> Users : SELECT
+SearchColors ..> Colors : SELECT
+AddColor ..> Colors : INSERT
+
+Users "1" -- "0..*" Colors : owns
+
+note bottom of Colors
+  Only UserId and Name appear in the code.
+  The real table may have more columns.
+end note
+@enduml
