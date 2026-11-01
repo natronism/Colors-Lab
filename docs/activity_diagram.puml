@@ -1,0 +1,78 @@
+@startuml colors-lab-activity
+title Colors Lab - activity diagram (login, search, add, log out)
+skinparam shadowing false
+
+|User|
+start
+:Open index.html;
+:Enter username and password;
+:Click "Do It";
+
+|Browser (code.js)|
+:doLogin() sends POST to Login.php;
+
+|API (PHP)|
+:Login.php reads JSON body;
+
+|MySQL|
+:SELECT ID, firstName, lastName
+FROM Users WHERE Login and Password match;
+
+|API (PHP)|
+if (Matching user found?) then (yes)
+  :Return id, firstName, lastName;
+else (no)
+  :Return error "No Records Found";
+  |Browser (code.js)|
+  :Show "User/Password combination incorrect";
+  stop
+endif
+
+|Browser (code.js)|
+:saveCookie() for 20 minutes;
+:Redirect to color.html;
+:readCookie();
+if (userId cookie present?) then (yes)
+else (no)
+  :Redirect to index.html;
+  stop
+endif
+
+|User|
+repeat :Choose an action on color.html;
+  if (Action?) then (Search color)
+    :Type search text and click "Search Color";
+    |Browser (code.js)|
+    :searchColor() sends POST to SearchColors.php;
+    |API (PHP)|
+    :SearchColors.php reads JSON body;
+    |MySQL|
+    :SELECT Name FROM Colors
+    WHERE Name LIKE search AND UserID = userId;
+    |API (PHP)|
+    :Return results list or error "No Records Found";
+    |Browser (code.js)|
+    :Show color names in the page;
+  elseif (Add color) then
+    |User|
+    :Type color name and click "Add Color";
+    |Browser (code.js)|
+    :addColor() sends POST to AddColor.php;
+    |API (PHP)|
+    :AddColor.php reads JSON body;
+    |MySQL|
+    :INSERT INTO Colors (UserId, Name);
+    |Browser (code.js)|
+    :Show "Color has been added";
+  else (Log out)
+    |User|
+    :Click "Log Out";
+    |Browser (code.js)|
+    :doLogout() clears the cookie;
+    :Redirect to index.html;
+    stop
+  endif
+  |User|
+repeat while (Keep using the app?) is (yes) not (no)
+stop
+@enduml
