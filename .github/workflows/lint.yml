@@ -1,0 +1,31 @@
+
+name: Colors App Linting
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install linting tools
+        run: npm install --no-save --package-lock=false htmlhint stylelint stylelint-config-standard eslint @eslint/js globals
+
+      - name: Lint HTML
+        run: ./node_modules/.bin/htmlhint "public/*.html"
+
+      - name: Lint CSS
+        run: ./node_modules/.bin/stylelint "public/css/*.css"
+
+      - name: Lint JavaScript
+        run: ./node_modules/.bin/eslint "public/js/code.js"
